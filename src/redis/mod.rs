@@ -87,7 +87,8 @@ pub struct Redis {
 impl Redis {
     pub fn call(&self, command: &str, args: &[&str]) -> Result<Reply, CellError> {
         log_debug!(self, "{} [began] args = {:?}", command, args);
-
+	
+  
         // We use a "format" string to tell redis what types we're passing in.
         // Currently we just pass everything as a string so this is just the
         // character "s" repeated as many times as we have arguments.
@@ -144,7 +145,7 @@ impl Redis {
         if let Ok(ref reply) = reply_res {
             log_debug!(self, "{} [ended] result = {:?}", command, reply);
         }
-
+        raw::replicate_verbatim(self.ctx);
         reply_res
     }
 
@@ -200,6 +201,9 @@ impl Redis {
     pub fn open_key_writable(&self, key: &str) -> RedisKeyWritable {
         RedisKeyWritable::open(self.ctx, key)
     }
+
+
+
 
     /// Tells Redis that we're about to reply with an (Redis) array.
     ///
